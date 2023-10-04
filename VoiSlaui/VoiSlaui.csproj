@@ -61,4 +61,8 @@
 	    <Version>1.2.71</Version>
 	  </PackageReference>
 	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\VoiSlauiLib\VoiSlauiLib.csproj" />
+	</ItemGroup>
 </Project>

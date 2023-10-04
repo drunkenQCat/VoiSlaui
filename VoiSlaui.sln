@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VoiSlaui", "VoiSlaui\VoiSla
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "解决方案项", "解决方案项", "{B9634233-CEE4-4C8A-9C94-BD772053D3C1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VoiSlauiLib", "VoiSlauiLib\VoiSlauiLib.csproj", "{5E19F682-8B7E-491E-BEFE-37737209F629}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VoiSlauiLib", "VoiSlauiLib\VoiSlauiLib.csproj", "{504039BB-567A-4D38-8EED-E6B3D9635248}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,10 +21,10 @@ Global
 		{8FD92461-D9E9-4F64-A1D9-FCD12A9F6605}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8FD92461-D9E9-4F64-A1D9-FCD12A9F6605}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8FD92461-D9E9-4F64-A1D9-FCD12A9F6605}.Release|Any CPU.Deploy.0 = Release|Any CPU
-		{5E19F682-8B7E-491E-BEFE-37737209F629}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5E19F682-8B7E-491E-BEFE-37737209F629}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5E19F682-8B7E-491E-BEFE-37737209F629}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5E19F682-8B7E-491E-BEFE-37737209F629}.Release|Any CPU.Build.0 = Release|Any CPU
+		{504039BB-567A-4D38-8EED-E6B3D9635248}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{504039BB-567A-4D38-8EED-E6B3D9635248}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{504039BB-567A-4D38-8EED-E6B3D9635248}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{504039BB-567A-4D38-8EED-E6B3D9635248}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
