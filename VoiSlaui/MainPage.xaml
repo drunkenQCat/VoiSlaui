@@ -36,17 +36,17 @@
                 HorizontalOptions="Center" />
 
             <Button
-                x:Name="FileBtn"
-                Text="文件"
+                x:Name="SlatePickerBtn"
+                Text="读取场记"
                 SemanticProperties.Hint="读取录音文件夹"
-                Clicked="OnCopyClicked"
+                Clicked="OnSlatePickerClicked"
                 HorizontalOptions="Center" />
 
             <Button
-                x:Name="ReaderBtn"
-                Text="读取"
-                SemanticProperties.Hint="读取录音文件夹"
-                Clicked="OnRecordPickerClicked"
+                x:Name="CopyRecordsBtn"
+                Text="复制录音文件夹"
+                SemanticProperties.Hint="复制读取录音文件夹到Movies"
+                Clicked="OnCopyClicked"
                 HorizontalOptions="Center" />
 
         </VerticalStackLayout>

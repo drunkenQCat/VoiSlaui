@@ -20,6 +20,14 @@ namespace VoiSlaui
             }
             set => Preferences.Set("StorageUri", value.ToString());
         }
+        public static string FolderName
+        {
+            get
+            {
+                var folderName = StorageUri.AbsolutePath.Split("%3A").Last();
+                return folderName;
+            }
+        }
 
         public partial void ShowUriBrowser()
         {
@@ -93,8 +101,7 @@ namespace VoiSlaui
             {
                 allBytes = externalStorage.ReadAllBytes(file.Name);
 
-                var folderName = StorageUri.AbsolutePath.Split("%3A").Last();
-                var destPath = Path.Combine(intPath, folderName);
+                var destPath = Path.Combine(intPath, FolderName);
                 if (!Directory.Exists(destPath))
                 {
                     Directory.CreateDirectory(destPath);

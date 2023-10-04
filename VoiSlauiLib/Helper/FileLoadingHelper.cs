@@ -14,6 +14,7 @@ public class FileLoadingHelper
     public List<FileInfo> WavList = new();
 
     public List<SlateLogItem> LogList = new();
+    public double writingProgress = 0.0;
 
     public AlePaser Ale;
     FileInfo alePath;
@@ -21,7 +22,7 @@ public class FileLoadingHelper
     private EnumerableRowCollection<DataRow> _queryBwf;
     private EnumerableRowCollection<DataRow> _queryTimeline;
 
-    public void GetBwf(string folderPath) //method to list all .wav files in given folder
+    public int GetBwf(string folderPath) //method to list all .wav files in given folder
     {
         DirectoryInfo rootDir = new DirectoryInfo(folderPath); //create directory object for given folder path
         var rootFiles = rootDir.GetFiles("*", SearchOption.AllDirectories);
@@ -31,7 +32,7 @@ public class FileLoadingHelper
         {
             WavList.Add(file); //add file to list of .wav files
         }
-        MappingRecordFileInfo();
+        return MappingRecordFileInfo();
     }
 
     public void GetLogs(string jsonPath) //method to list all .wav files in given folder
@@ -94,14 +95,16 @@ public class FileLoadingHelper
         {
             MappingRecordFileInfo(); 
             MapppingAleInfo();
+            return Task.CompletedTask;
         } );
     }
 
-    void MappingRecordFileInfo()
+    int MappingRecordFileInfo()
     {
         if (LogList.Count == 0 || WavList.Count == 0)
-            return;
+            return 0;
         List<Task> mappingTasks = new();
+        int mappedCount = 0;
         foreach (var item in LogList)
         {
             Task MapItemToBwf()
@@ -114,6 +117,7 @@ public class FileLoadingHelper
                     select info;
                 query = FindAnyPossible(query, item);
                 var files = query.ToList();
+                if (files != null) mappedCount++;
                 item.bwfList = files;
                 try
                 {
@@ -130,6 +134,7 @@ public class FileLoadingHelper
             mappingTasks.Add(MapItemToBwf());
         }
         Task.WhenAll(mappingTasks);
+        return mappedCount;
     }
 
     private static void GetBwfTimecode(List<FileInfo> files, SlateLogItem item)
@@ -215,6 +220,10 @@ public class FileLoadingHelper
 
     public async Task WriteMetaData()
     {
+        int writedCount = 0;
+        double writeProg = 0.0;
+        var logAmount = LogList.Count;
+
         Task WriteSingleBwf(FileInfo bwf, SlateLogItem item)
         {
             Track tr = new(bwf.FullName);
@@ -239,7 +248,10 @@ public class FileLoadingHelper
             tr.Description = item.tkNote;
             tr.Title = item.shtNote;
             tr.Save();
-            Console.WriteLine($"{tr.Path} loaded");
+
+            writedCount++;
+            writeProg = writedCount / logAmount;
+            ProgressBlock.Instance.OnProgress(writeProg);
             return Task.CompletedTask;
         }
 

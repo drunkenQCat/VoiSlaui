@@ -65,4 +65,22 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\VoiSlauiLib\VoiSlauiLib.csproj" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="Views\WriteProgressPopView.xaml.cs">
+	    <DependentUpon>WriteProgressPopView.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Views\CopyProgressPopView.xaml.cs">
+	    <DependentUpon>CopyProgressPopView.xaml</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <MauiXaml Update="Views\WriteProgressPopView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\CopyProgressPopView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	</ItemGroup>
 </Project>

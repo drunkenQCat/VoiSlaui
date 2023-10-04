@@ -1,57 +1,37 @@
-﻿namespace VoiSlaui;
-using Microsoft.Maui.Controls;
+﻿using VoiSlauiLib.Models;
+using VoiSlauiLib.Helper;
+using CommunityToolkit.Maui.Views;
+using VoiSlaui.Views;
+using andEnv = Android.OS.Environment;
+using VoiSlauiLib.Utilities;
 
+namespace VoiSlaui;
 public partial class MainPage : ContentPage
 {
-	int count = 0;
+    int count = 0;
+    List<SlateLogItem> logItemList = new();
+    FileLoadingHelper fhelper = FileLoadingHelper.Instance;
+    WriteProgressPopView writeProg = new ();
 
-	public MainPage()
-	{
-		InitializeComponent();
-	}
+    public bool IsWritingEnabled { get; private set; }
 
-	private void OnCounterClicked(object sender, EventArgs e)
-	{
-		count++;
-
-		if (count == 1)
-			CounterBtn.Text = $"Clicked {count} time";
-		else
-			CounterBtn.Text = $"点了 {count} 次";
-
-		SemanticScreenReader.Announce(CounterBtn.Text);
-	}
-    private async void OnCopyClicked(object sender, EventArgs e)
+    public MainPage()
     {
-        //var pickResult = await FolderPicker.Default.PickAsync(CancellationToken.None);
-
-        //if (pickResult.IsSuccessful)
-        //{
-        //    Console.WriteLine("Selected folder: " + pickResult.Folder.Name);
-        //}
-        //var docsDirectory = Android.App.Application.Context.GetExternalFilesDir(Android.OS.Environment.DirectoryDocuments);
-        //File.WriteAllText($"{docsDirectory.AbsoluteFile.Path}/atextfile.txt", "contents are here");
-#if ANDROID
-        //var docsDirectory = Android.App.Application.Context.GetExternalFilesDir(Android.OS.Environment.DirectoryDcim);
-        //File.WriteAllText($"{docsDirectory.AbsoluteFile.Path}/atextfile.txt", pickResult.Folder.Path);
-        //using FileStream outputStream = System.IO.File.OpenWrite(targetFile);
-        //using StreamWriter streamWriter = new StreamWriter(outputStream);
-        //await streamWriter.WriteAsync("ssss");
-#endif
-#if ANDROID
-        SafService service = new();
-        service.ShowUriBrowser();
-        SafService safService = new();
-        var desPath = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryMovies);
-        safService.CopyAllFromExternalStorage(desPath.AbsolutePath);
-
-        await DisplayAlert("content", "File Copied", "OK");
-#endif
+        InitializeComponent();
     }
 
+    private void OnCounterClicked(object sender, EventArgs e)
+    {
+        count++;
 
-    //read file
-    private async void OnRecordPickerClicked(object sender, EventArgs e)
+        if (count == 1)
+            CounterBtn.Text = $"Clicked {count} time";
+        else
+            CounterBtn.Text = $"点了 {count} 次";
+
+        SemanticScreenReader.Announce(CounterBtn.Text);
+    }
+    private async void OnSlatePickerClicked(object sender, EventArgs e)
     {
 #if ANDROID
         var pickResult = await FilePicker.Default.PickAsync();
@@ -59,11 +39,57 @@ public partial class MainPage : ContentPage
         if (pickResult is not null)
         {
             Console.WriteLine("Selected folder: " + pickResult.FullPath);
+            fhelper.GetLogs(pickResult.FullPath);
+            logItemList = fhelper.LogList;
         }
-        var docsDirectory = Android.App.Application.Context.GetExternalFilesDir(Android.OS.Environment.DirectoryDocuments);
-        File.WriteAllText($"{docsDirectory.AbsoluteFile.Path}/atextfile.txt", "contents are here");
-        await DisplayAlert("content", "File Copied", "OK");
+        else
+        {
+            await DisplayAlert("读取失败", $"错误信息: {pickResult.FileName}", "确定");
+        }
+        IsWritingEnabled = false;
+        // Todo:Loading...
 #endif
     }
-}
 
+    private async void OnCopyClicked(object sender, EventArgs e)
+    {
+#if ANDROID
+        // 选取录音文件夹
+        SafService safService = new();
+        safService.ShowUriBrowser();
+
+        // 复制录音
+        var copyProg = new CopyProgressPopView();
+        this.ShowPopup(copyProg);
+        var desPath = andEnv.GetExternalStoragePublicDirectory(andEnv.DirectoryMovies);
+        Task copyAllRecords = new TaskFactory().StartNew(
+            () => safService.CopyAllFromExternalStorage(desPath.AbsolutePath)
+            );
+        await copyAllRecords;
+        await copyProg.prog.ProgressTo(0.75, 200, Easing.CubicIn);
+        
+        var destinyPath = Path.Combine(desPath.AbsolutePath, SafService.FolderName);
+        int matchedCount = fhelper.GetBwf(destinyPath);
+        await copyProg.prog.ProgressTo(1, 100, Easing.CubicIn);
+        copyProg.Close();
+        await DisplayAlert("录音已复制到Movies", $"{matchedCount}条录音已匹配，即将写入元数据", "点击继续");
+
+        // 写入元数据
+        this.ShowPopup(writeProg);
+        Task task = new TaskFactory().StartNew(() => fhelper.WriteMetaData());
+        await task;
+        writeProg.Close();
+        IsWritingEnabled = true;
+        await DisplayAlert("写入完成", "元数据已写入，请安全移除SD卡", "确定");
+#endif
+    }
+
+    private void SubscribeProgress()
+    {
+        ProgressBlock.Instance.ProgressHandler += (_, progressCount) =>
+        {
+            writeProg.prog.ProgressTo(progressCount, 1, Easing.CubicIn);
+        };
+    }
+
+}
