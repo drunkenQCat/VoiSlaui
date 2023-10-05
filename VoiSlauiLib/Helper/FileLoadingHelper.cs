@@ -220,9 +220,9 @@ public class FileLoadingHelper
 
     public async Task WriteMetaData()
     {
-        int writedCount = 0;
+        double writedCount = 0.0;
         double writeProg = 0.0;
-        var logAmount = LogList.Count;
+        double logAmount = LogList.Count;
 
         Task WriteSingleBwf(FileInfo bwf, SlateLogItem item)
         {

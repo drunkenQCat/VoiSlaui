@@ -28,12 +28,15 @@
                 FontSize="18"
                 HorizontalOptions="Center" />
 
-            <Button
-                x:Name="CounterBtn"
-                Text="Click me"
-                SemanticProperties.Hint="Counts the number of times you click"
-                Clicked="OnCounterClicked"
-                HorizontalOptions="Center" />
+            <Label 
+                x:Name="progressIndicator"
+                Text=""
+                HorizontalOptions="Start" />
+
+            <ProgressBar
+                x:Name="progressBar"
+                Progress="0"
+                />
 
             <Button
                 x:Name="SlatePickerBtn"
