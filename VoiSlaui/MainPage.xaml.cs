@@ -19,6 +19,7 @@ public partial class MainPage : ContentPage
     private async void OnSlatePickerClicked(object sender, EventArgs e)
     {
 #if ANDROID
+        DotNetBot.Source = "dotnet_bot_read_slate.png";
         var pickResult = await FilePicker.Default.PickAsync();
 
         if (pickResult is not null)
@@ -40,12 +41,14 @@ public partial class MainPage : ContentPage
     private async void OnCopyClicked(object sender, EventArgs e)
     {
 #if ANDROID
+        DotNetBot.Source = "dotnet_bot_copy_wav.png";
         var desPath = andEnv.GetExternalStoragePublicDirectory(andEnv.DirectoryMovies);
         SafService safService = await pickRecordFolder();
         await copyRecords(safService);
         await readBwfInfo();
 
         await writeMetadata();
+        DotNetBot.Source = "dotnet_bot_ok.png";
 
         static async Task<SafService> pickRecordFolder()
         {
@@ -71,8 +74,7 @@ public partial class MainPage : ContentPage
         async Task readBwfInfo()
         {
             progressIndicator.Text = "正在读取录音文件元数据";
-            //var destinyPath = Path.Combine(desPath.AbsolutePath, SafService.FolderName);
-            var destinyPath = Path.Combine(desPath.AbsolutePath, "09-21-23");
+            var destinyPath = Path.Combine(desPath.AbsolutePath, SafService.FolderName);
             int matchedCount = fhelper.GetBwf(destinyPath);
             await progressBar.ProgressTo(1, 100, Easing.CubicIn);
             progressIndicator.Text = "复制完成";
@@ -82,6 +84,7 @@ public partial class MainPage : ContentPage
         async Task writeMetadata()
         {
             // 写入元数据
+            DotNetBot.Source = "dotnet_bot_write_metadata.png";
             SubscribeProgress();
             progressIndicator.Text = "正在对录音备份写入元数据";
             Task task = new TaskFactory().StartNew(() => fhelper.WriteMetaData());

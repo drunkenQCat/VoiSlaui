@@ -4,6 +4,7 @@ using File = System.IO.File;
 using Debug = System.Diagnostics.Debug;
 using AndroidX.DocumentFile.Provider;
 using PortableStorage;
+using CommunityToolkit.Maui.Core.Primitives;
 
 // SafService.cs Android Platform
 
@@ -81,7 +82,6 @@ namespace VoiSlaui
                     if (StorageUri == null) SafStorageHelper.BrowserFolder(MainActivity.Instance, MainActivity.BROWSE_REQUEST_CODE);
                     var externalStorage = SafStorgeProvider.CreateStorage(MainActivity.Instance, StorageUri);
                     var extPath = GetDirectoryPath();
-
                     foreach (var file in extPath.ListFiles())
                     {
                         PasteFile(externalStorage, file, desPath);
