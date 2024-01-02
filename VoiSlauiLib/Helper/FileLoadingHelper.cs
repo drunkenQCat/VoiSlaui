@@ -117,7 +117,7 @@ public class FileLoadingHelper
                     select info;
                 query = FindAnyPossible(query, item);
                 var files = query.ToList();
-                if (files != null) mappedCount++;
+                if (files != null && files.Count != 0) mappedCount++;
                 item.bwfList = files;
                 try
                 {
@@ -154,7 +154,17 @@ public class FileLoadingHelper
         // find if without linker, is there any possible file
         if (!query.Any())
         {
-            Regex ambigReg = new($".*{item.filenamePrefix}.*{item.filenameNum.ToString().PadLeft(3, '0')}.(wav|WAV|Wav).*");
+            Regex ambigReg = new($".*{item.filenamePrefix}.*{item.filenameNum}");
+            query =
+                from info in WavList
+                where ambigReg.IsMatch(info.Name)
+                orderby info.Name
+                select info;
+        }
+        // For sound devices
+        if (!query.Any())
+        {
+            Regex ambigReg = new($".*{item.filenamePrefix}.*{item.filenameNum.ToString().PadLeft(2, '0')}");
             query =
                 from info in WavList
                 where ambigReg.IsMatch(info.Name)
@@ -222,7 +232,7 @@ public class FileLoadingHelper
     {
         double writedCount = 0.0;
         double writeProg = 0.0;
-        double logAmount = LogList.Count;
+        double logAmount = LogList.Sum(log => log.bwfList.Count);
 
         Task WriteSingleBwf(FileInfo bwf, SlateLogItem item)
         {
